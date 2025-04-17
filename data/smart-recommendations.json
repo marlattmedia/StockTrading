@@ -1,50 +1,50 @@
 [
   {
     "ticker": "PLTR",
-    "price": 94.16,
+    "price": 94.02,
     "short_percent": "2.46%",
     "float": "2.12B",
-    "volume": "66023900",
+    "volume": "67855077",
     "recommendation": "Margin"
   },
   {
     "ticker": "AMD",
-    "price": 88.0,
+    "price": 87.83,
     "short_percent": "2.85%",
     "float": "1.62B",
-    "volume": "23037552",
+    "volume": "23929589",
     "recommendation": "Margin"
   },
   {
     "ticker": "ENPH",
-    "price": 52.38,
+    "price": 52.3,
     "short_percent": "14.56%",
     "float": "125.85M",
-    "volume": "1842755",
+    "volume": "1919363",
     "recommendation": "Margin"
   },
   {
     "ticker": "MRVL",
-    "price": 51.55,
+    "price": 51.66,
     "short_percent": "3.07%",
     "float": "861.91M",
-    "volume": "7755857",
+    "volume": "8080138",
     "recommendation": "Margin"
   },
   {
     "ticker": "SMCI",
-    "price": 31.53,
+    "price": 31.61,
     "short_percent": "22.82%",
     "float": "509.10M",
-    "volume": "19523373",
+    "volume": "20300453",
     "recommendation": "Margin"
   },
   {
     "ticker": "GRRR",
-    "price": 19.6,
+    "price": 19.75,
     "short_percent": "13.33%",
     "float": "16.84M",
-    "volume": "659374",
+    "volume": "703537",
     "recommendation": "Margin"
   },
   {
@@ -52,31 +52,31 @@
     "price": 19.01,
     "short_percent": "2.61%",
     "float": "4.36B",
-    "volume": "59251687",
+    "volume": "60873221",
     "recommendation": "Margin"
   },
   {
     "ticker": "LUNR",
-    "price": 7.49,
+    "price": 7.45,
     "short_percent": "18.23%",
     "float": "103.09M",
-    "volume": "2467661",
+    "volume": "2564999",
     "recommendation": "TFSA"
   },
   {
     "ticker": "RIOT",
-    "price": 6.39,
+    "price": 6.41,
     "short_percent": "26.62%",
     "float": "325.42M",
-    "volume": "15629570",
+    "volume": "16159308",
     "recommendation": "TFSA"
   },
   {
     "ticker": "NVAX",
-    "price": 5.94,
+    "price": 5.99,
     "short_percent": "25.16%",
     "float": "146.57M",
-    "volume": "2766827",
+    "volume": "2869249",
     "recommendation": "TFSA"
   },
   {
@@ -84,31 +84,31 @@
     "price": 5.73,
     "short_percent": "62.95%",
     "float": "4.17M",
-    "volume": "267312",
+    "volume": "271246",
     "recommendation": "TFSA"
   },
   {
     "ticker": "BYND",
-    "price": 2.78,
+    "price": 2.79,
     "short_percent": "41.49%",
     "float": "71.83M",
-    "volume": "2497324",
+    "volume": "2524588",
     "recommendation": "TFSA"
   },
   {
     "ticker": "WOLF",
-    "price": 2.33,
+    "price": 2.39,
     "short_percent": "41.33%",
     "float": "154.06M",
-    "volume": "11440457",
+    "volume": "12799623",
     "recommendation": "TFSA"
   },
   {
     "ticker": "NWTG",
-    "price": 1.93,
+    "price": 1.92,
     "short_percent": "5.78%",
     "float": "4.20M",
-    "volume": "347732",
+    "volume": "355180",
     "recommendation": "TFSA"
   },
   {
@@ -116,15 +116,15 @@
     "price": 1.92,
     "short_percent": "19.96%",
     "float": "63.72M",
-    "volume": "1495706",
+    "volume": "1581312",
     "recommendation": "TFSA"
   },
   {
     "ticker": "HOWL",
-    "price": 0.87,
+    "price": 0.88,
     "short_percent": "5.91%",
     "float": "33.13M",
-    "volume": "112520",
+    "volume": "125368",
     "recommendation": "TFSA"
   },
   {
@@ -132,7 +132,7 @@
     "price": 0.57,
     "short_percent": "26.43%",
     "float": "413.65M",
-    "volume": "3196663",
+    "volume": "3361815",
     "recommendation": "TFSA"
   }
 ]
