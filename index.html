@@ -87,6 +87,14 @@
       </thead>
       <tbody id="alertBody"></tbody>
     </table>
+
+    <h2>📌 Fallback Watchlist</h2>
+    <div>
+      <label>➕ Add Ticker: </label>
+      <input id="newTicker" type="text" maxlength="5" />
+      <button onclick="addTicker()">Add</button>
+    </div>
+    <ul id="watchlist"></ul>
   </div>
 
   <script>
@@ -95,6 +103,12 @@
       const data = await response.json();
       const body = document.getElementById('squeezeBody');
       body.innerHTML = '';
+
+      if (data.length === 0) {
+        loadFallback();
+        return;
+      }
+
       data.forEach(stock => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -129,17 +143,43 @@
       });
     }
 
+    async function loadFallback() {
+      const response = await fetch('data/fallback-watchlist.json');
+      const data = await response.json();
+      const table = document.getElementById('squeezeBody');
+      table.innerHTML = '';
+      data.forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${entry.ticker}</td>
+          <td colspan="5">📌 Webull Watchlist</td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
     function calculate() {
       const price = parseFloat(document.getElementById('buyPrice').value);
       const shares = parseInt(document.getElementById('numShares').value);
       if (!isNaN(price) && !isNaN(shares) && shares > 0) {
         const totalInvested = price * shares;
-        const profitTarget = totalInvested * 0.10; // 10% profit
+        const profitTarget = totalInvested * 0.10;
         const sellTarget = (totalInvested + profitTarget) / shares;
         document.getElementById('sellTarget').innerText =
           `🎯 Sell at: $${sellTarget.toFixed(2)} for 10% gain ($${profitTarget.toFixed(2)} profit)`;
       } else {
         document.getElementById('sellTarget').innerText = '';
+      }
+    }
+
+    function addTicker() {
+      const ticker = document.getElementById('newTicker').value.trim().toUpperCase();
+      if (ticker && ticker.length <= 5) {
+        const list = document.getElementById('watchlist');
+        const item = document.createElement('li');
+        item.textContent = ticker;
+        list.appendChild(item);
+        document.getElementById('newTicker').value = '';
       }
     }
 
