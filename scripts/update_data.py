@@ -28,6 +28,10 @@ def scrape_finviz_for_ticker(ticker):
                 info[key] = val
 
         price = float(info.get("Price", "0").replace("$", "").replace(",", ""))
+        if price > 100 or price < 0.5:
+            print(f"⏭ Skipping {ticker} — price ${price} outside valid range.")
+            return None
+
         short_float = info.get("Short Float", "0%")
         shares_float = info.get("Shs Float", "N/A")
         volume = info.get("Volume", "0").replace(",", "")
@@ -58,7 +62,7 @@ if __name__ == "__main__":
         result = scrape_finviz_for_ticker(ticker)
         if result:
             results.append(result)
-        sleep(1)  # Respectful delay
+        sleep(1)
 
     save_to_json(results, "smart-recommendations.json")
-    print(f"✅ Updated with {len(results)} live entries.")
+    print(f"✅ Saved {len(results)} entries under $100.")
