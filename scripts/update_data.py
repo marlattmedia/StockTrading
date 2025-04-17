@@ -15,8 +15,14 @@ def scrape_finviz_for_ticker(ticker):
     headers = {'User-Agent': 'Mozilla/5.0'}
     try:
         response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            print(f"❌ Failed to load {ticker} — status {response.status_code}")
+            return None
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find("table", class_="snapshot-table2")
+        if not table:
+            print(f"⚠️ Could not find data table for {ticker}")
+            return None
         rows = table.find_all("tr")
 
         info = {}
@@ -27,7 +33,13 @@ def scrape_finviz_for_ticker(ticker):
                 val = cols[i + 1].text.strip()
                 info[key] = val
 
-        price = float(info.get("Price", "0").replace("$", "").replace(",", ""))
+        price_str = info.get("Price", "0").replace("$", "").replace(",", "")
+        try:
+            price = float(price_str)
+        except ValueError:
+            print(f"⚠️ Could not parse price for {ticker}: {price_str}")
+            return None
+
         if price > 100 or price < 0.5:
             print(f"⏭ Skipping {ticker} — price ${price} outside valid range.")
             return None
@@ -65,4 +77,4 @@ if __name__ == "__main__":
         sleep(1)
 
     save_to_json(results, "smart-recommendations.json")
-    print(f"✅ Saved {len(results)} entries under $100.")
+    print(f"✅ Saved {len(results)} tickers with valid prices under $100.")
