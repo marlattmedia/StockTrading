@@ -42,10 +42,9 @@
 <body>
   <div class="container">
     <h1>📈 StockTrading Real-Time Dashboard</h1>
-
-    <h2>📊 Squeeze Candidates & Smart Account Routing</h2>
-    <div id="fallbackNotice" class="note"></div>
-    <table id="squeezeTable">
+    <h2>📊 Squeeze Candidates, Trending, and Watchlist</h2>
+    <div class="note" id="notice"></div>
+    <table>
       <thead>
         <tr>
           <th>Ticker</th>
@@ -57,7 +56,7 @@
           <th>Source</th>
         </tr>
       </thead>
-      <tbody id="squeezeBody"></tbody>
+      <tbody id="dashboardBody"></tbody>
     </table>
   </div>
 
@@ -66,7 +65,7 @@
       try {
         const res = await fetch(path);
         return await res.json();
-      } catch (err) {
+      } catch {
         return [];
       }
     }
@@ -82,31 +81,29 @@
         <td>${t.recommendation || "?"}</td>
         <td>${src}</td>
       `;
-      document.getElementById("squeezeBody").appendChild(row);
+      document.getElementById("dashboardBody").appendChild(row);
     }
 
     async function loadDashboard() {
-      const squeezeData = await fetchJSON("data/smart-recommendations.json");
-      const fallbackNotice = document.getElementById("fallbackNotice");
-      const body = document.getElementById("squeezeBody");
+      const [squeeze, reddit, alerts, fallback] = await Promise.all([
+        fetchJSON("data/smart-recommendations.json"),
+        fetchJSON("data/reddit-sentiment.json"),
+        fetchJSON("data/squeeze-alerts.json"),
+        fetchJSON("data/fallback-watchlist.json")
+      ]);
 
-      if (squeezeData.length > 0) {
-        squeezeData.forEach(t => appendRow(t, "✅ Squeeze Match"));
-        fallbackNotice.innerText = "";
+      const notice = document.getElementById("notice");
+      const totalRows = squeeze.length + reddit.length + alerts.length + fallback.length;
+
+      if (totalRows === 0) {
+        notice.innerText = "⚠️ No stock data available. Please check your sources.";
         return;
       }
 
-      fallbackNotice.innerText = "No squeeze matches. Showing fallback stocks from Reddit, alerts, or manual list.";
-
-      const [reddit, alerts, fallback] = await Promise.all([
-        fetchJSON("data/reddit-sentiment.json"),
-        fetchJSON("data/squeeze-alerts.json"),
-        fetchJSON("data/smart-recommendations.json")
-      ]);
-
+      squeeze.forEach(t => appendRow(t, "✅ Squeeze Match"));
       reddit.slice(0, 5).forEach(t => appendRow({ ticker: t.ticker }, "🔥 Reddit Trend"));
       alerts.slice(0, 5).forEach(t => appendRow({ ticker: t.ticker }, "⚠️ Squeeze Alert"));
-      fallback.slice(0, 5).forEach(t => appendRow(t, "📌 Manual Watch"));
+      fallback.slice(0, 5).forEach(t => appendRow({ ticker: t.ticker }, "📌 Manual Watch"));
     }
 
     loadDashboard();
