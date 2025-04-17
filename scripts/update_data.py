@@ -5,10 +5,26 @@ import json
 import os
 from time import sleep
 
-def load_fallback_watchlist(path="data/fallback-watchlist.json"):
-    with open(path, "r") as f:
-        tickers = json.load(f)
-    return [entry["ticker"].upper() for entry in tickers]
+def load_combined_tickers():
+    sources = [
+        "data/fallback-watchlist.json",
+        "data/reddit-sentiment.json",
+        "data/squeeze-alerts.json"
+    ]
+    tickers = set()
+    for source in sources:
+        if os.path.exists(source):
+            with open(source, "r") as f:
+                try:
+                    data = json.load(f)
+                    for entry in data:
+                        if isinstance(entry, dict) and "ticker" in entry:
+                            tickers.add(entry["ticker"].upper())
+                        elif isinstance(entry, str):
+                            tickers.add(entry.upper())
+                except Exception as e:
+                    print(f"⚠️ Failed to read {source}: {e}")
+    return sorted(tickers)
 
 def scrape_finviz_for_ticker(ticker):
     url = f"https://finviz.com/quote.ashx?t={ticker}"
@@ -34,11 +50,12 @@ def scrape_finviz_for_ticker(ticker):
                 info[key] = val
 
         price_str = info.get("Price", "").replace("$", "").replace(",", "").strip()
-        if not price_str or not price_str.replace(".", "", 1).isdigit():
-            print(f"⚠️ Skipping {ticker} — invalid price: {price_str}")
+        try:
+            price = float(price_str)
+        except ValueError:
+            print(f"⚠️ Could not parse price for {ticker}: {price_str}")
             return None
 
-        price = float(price_str)
         if price > 100 or price < 0.5:
             print(f"⏭ Skipping {ticker} — price ${price} outside valid range.")
             return None
@@ -66,8 +83,9 @@ def save_to_json(data, filename):
         json.dump(data, f, indent=2)
 
 if __name__ == "__main__":
-    tickers = load_fallback_watchlist()
+    tickers = load_combined_tickers()
     results = []
+    print(f"🔍 Found {len(tickers)} unique tickers to scan...")
 
     for ticker in tickers:
         result = scrape_finviz_for_ticker(ticker)
@@ -75,5 +93,5 @@ if __name__ == "__main__":
             results.append(result)
         sleep(1)
 
-    save_to_json(results, "smart-recommendations.json")
-    print(f"✅ Saved {len(results)} tickers with valid prices under $100.")
+    save_to_json(results, "data/smart-recommendations.json")
+    print(f"✅ Saved {len(results)} validated tickers with Finviz data.")
