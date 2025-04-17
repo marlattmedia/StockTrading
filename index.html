@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>StockTrading Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #f1f1f1;
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2 {
+      color: gold;
+    }
+    .container {
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      margin-top: 10px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #333;
+    }
+    th {
+      background-color: #222;
+    }
+    tr:nth-child(even) {
+      background-color: #1a1a1a;
+    }
+    input, button {
+      padding: 6px;
+      margin: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📈 StockTrading Real-Time Dashboard</h1>
+
+    <div>
+      <label>Buy Price: </label><input id="buyPrice" type="number" step="0.01" />
+      <label>Shares: </label><input id="numShares" type="number" value="100" />
+      <button onclick="calculate()">Calculate Sell Target</button>
+      <p id="sellTarget"></p>
+    </div>
+
+    <h2>📊 Squeeze Candidates & Smart Account Routing</h2>
+    <table id="squeezeTable">
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Price</th>
+          <th>Float</th>
+          <th>Short %</th>
+          <th>Volume</th>
+          <th>Recommended Account</th>
+        </tr>
+      </thead>
+      <tbody id="squeezeBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    async function fetchData() {
+      const response = await fetch('data/smart-recommendations.json');
+      const data = await response.json();
+      const body = document.getElementById('squeezeBody');
+      body.innerHTML = '';
+      data.forEach(stock => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${stock.ticker}</td>
+          <td>${stock.price}</td>
+          <td>${stock.float}</td>
+          <td>${stock.short_percent}</td>
+          <td>${stock.volume}</td>
+          <td>${stock.recommendation}</td>
+        `;
+        body.appendChild(row);
+      });
+    }
+
+    function calculate() {
+      const price = parseFloat(document.getElementById('buyPrice').value);
+      const shares = parseInt(document.getElementById('numShares').value);
+      if (!isNaN(price) && !isNaN(shares) && shares > 0) {
+        const targetPrice = ((price * shares) + 500) / shares;
+        document.getElementById('sellTarget').innerText =
+          `🎯 Sell at: $${targetPrice.toFixed(2)} for $500 profit`;
+      } else {
+        document.getElementById('sellTarget').innerText = '';
+      }
+    }
+
+    setInterval(fetchData, 60000);  // Auto-refresh every 60 seconds
+    fetchData();  // Initial load
+  </script>
+</body>
+</html>
