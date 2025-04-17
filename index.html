@@ -33,31 +33,18 @@
     tr:nth-child(even) {
       background-color: #1a1a1a;
     }
-    input, button {
-      padding: 6px;
-      margin: 4px;
-    }
-    a.login-link {
-      color: #1e90ff;
-      font-size: 14px;
-      display: inline-block;
-      margin-top: 10px;
+    .note {
+      font-style: italic;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>📈 StockTrading Real-Time Dashboard</h1>
-    <a href="https://login.questrade.com/account/login" class="login-link" target="_blank">🔑 Log in to Questrade</a>
-
-    <div>
-      <label>Buy Price: </label><input id="buyPrice" type="number" step="0.01" />
-      <label>Shares: </label><input id="numShares" type="number" value="100" />
-      <button onclick="calculate()">Calculate Sell Target</button>
-      <p id="sellTarget"></p>
-    </div>
 
     <h2>📊 Squeeze Candidates & Smart Account Routing</h2>
+    <div id="fallbackNotice" class="note"></div>
     <table id="squeezeTable">
       <thead>
         <tr>
@@ -66,130 +53,63 @@
           <th>Float</th>
           <th>Short %</th>
           <th>Volume</th>
-          <th>Recommended Account</th>
+          <th>Recommendation</th>
+          <th>Source</th>
         </tr>
       </thead>
       <tbody id="squeezeBody"></tbody>
     </table>
-
-    <h2>🚨 Squeeze Alerts (Watched Tickers)</h2>
-    <table id="alertTable">
-      <thead>
-        <tr>
-          <th>Ticker</th>
-          <th>Price</th>
-          <th>Short %</th>
-          <th>Volume</th>
-          <th>Float</th>
-          <th>Alert</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody id="alertBody"></tbody>
-    </table>
-
-    <h2>📌 Fallback Watchlist</h2>
-    <div>
-      <label>➕ Add Ticker: </label>
-      <input id="newTicker" type="text" maxlength="5" />
-      <button onclick="addTicker()">Add</button>
-    </div>
-    <ul id="watchlist"></ul>
   </div>
 
   <script>
-    async function fetchData() {
-      const response = await fetch('data/smart-recommendations.json');
-      const data = await response.json();
-      const body = document.getElementById('squeezeBody');
-      body.innerHTML = '';
+    async function fetchJSON(path) {
+      try {
+        const res = await fetch(path);
+        return await res.json();
+      } catch (err) {
+        return [];
+      }
+    }
 
-      if (data.length === 0) {
-        loadFallback();
+    function appendRow(t, src) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${t.ticker}</td>
+        <td>${t.price || "?"}</td>
+        <td>${t.float || "?"}</td>
+        <td>${t.short_percent || "?"}</td>
+        <td>${t.volume || "?"}</td>
+        <td>${t.recommendation || "?"}</td>
+        <td>${src}</td>
+      `;
+      document.getElementById("squeezeBody").appendChild(row);
+    }
+
+    async function loadDashboard() {
+      const squeezeData = await fetchJSON("data/smart-recommendations.json");
+      const fallbackNotice = document.getElementById("fallbackNotice");
+      const body = document.getElementById("squeezeBody");
+
+      if (squeezeData.length > 0) {
+        squeezeData.forEach(t => appendRow(t, "✅ Squeeze Match"));
+        fallbackNotice.innerText = "";
         return;
       }
 
-      data.forEach(stock => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${stock.ticker}</td>
-          <td>${stock.price}</td>
-          <td>${stock.float}</td>
-          <td>${stock.short_percent}</td>
-          <td>${stock.volume}</td>
-          <td>${stock.recommendation}</td>
-        `;
-        body.appendChild(row);
-      });
+      fallbackNotice.innerText = "No squeeze matches. Showing fallback stocks from Reddit, alerts, or manual list.";
+
+      const [reddit, alerts, fallback] = await Promise.all([
+        fetchJSON("data/reddit-sentiment.json"),
+        fetchJSON("data/squeeze-alerts.json"),
+        fetchJSON("data/smart-recommendations.json")
+      ]);
+
+      reddit.slice(0, 5).forEach(t => appendRow({ ticker: t.ticker }, "🔥 Reddit Trend"));
+      alerts.slice(0, 5).forEach(t => appendRow({ ticker: t.ticker }, "⚠️ Squeeze Alert"));
+      fallback.slice(0, 5).forEach(t => appendRow(t, "📌 Manual Watch"));
     }
 
-    async function fetchAlerts() {
-      const response = await fetch('data/squeeze-alerts.json');
-      const data = await response.json();
-      const body = document.getElementById('alertBody');
-      body.innerHTML = '';
-      data.forEach(alert => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${alert.ticker}</td>
-          <td>${alert.price}</td>
-          <td>${alert.short_percent}</td>
-          <td>${alert.volume}</td>
-          <td>${alert.float}</td>
-          <td>${alert.alert}</td>
-          <td>${alert.notes}</td>
-        `;
-        body.appendChild(row);
-      });
-    }
-
-    async function loadFallback() {
-      const response = await fetch('data/fallback-watchlist.json');
-      const data = await response.json();
-      const table = document.getElementById('squeezeBody');
-      table.innerHTML = '';
-      data.forEach(entry => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${entry.ticker}</td>
-          <td colspan="5">📌 Webull Watchlist</td>
-        `;
-        table.appendChild(row);
-      });
-    }
-
-    function calculate() {
-      const price = parseFloat(document.getElementById('buyPrice').value);
-      const shares = parseInt(document.getElementById('numShares').value);
-      if (!isNaN(price) && !isNaN(shares) && shares > 0) {
-        const totalInvested = price * shares;
-        const profitTarget = totalInvested * 0.10;
-        const sellTarget = (totalInvested + profitTarget) / shares;
-        document.getElementById('sellTarget').innerText =
-          `🎯 Sell at: $${sellTarget.toFixed(2)} for 10% gain ($${profitTarget.toFixed(2)} profit)`;
-      } else {
-        document.getElementById('sellTarget').innerText = '';
-      }
-    }
-
-    function addTicker() {
-      const ticker = document.getElementById('newTicker').value.trim().toUpperCase();
-      if (ticker && ticker.length <= 5) {
-        const list = document.getElementById('watchlist');
-        const item = document.createElement('li');
-        item.textContent = ticker;
-        list.appendChild(item);
-        document.getElementById('newTicker').value = '';
-      }
-    }
-
-    setInterval(() => {
-      fetchData();
-      fetchAlerts();
-    }, 60000);
-
-    fetchData();
-    fetchAlerts();
+    loadDashboard();
   </script>
 </body>
 </html>
