@@ -1,0 +1,74 @@
+[
+  {
+    "ticker": "ZS",
+    "source": "Webull"
+  },
+  {
+    "ticker": "PLTR",
+    "source": "Webull"
+  },
+  {
+    "ticker": "AMD",
+    "source": "Webull"
+  },
+  {
+    "ticker": "ENPH",
+    "source": "Webull"
+  },
+  {
+    "ticker": "MRVL",
+    "source": "Webull"
+  },
+  {
+    "ticker": "SMCI",
+    "source": "Webull"
+  },
+  {
+    "ticker": "GRRR",
+    "source": "Webull"
+  },
+  {
+    "ticker": "INTC",
+    "source": "Webull"
+  },
+  {
+    "ticker": "LUNR",
+    "source": "Webull"
+  },
+  {
+    "ticker": "RIOT",
+    "source": "Webull"
+  },
+  {
+    "ticker": "NVAX",
+    "source": "Webull"
+  },
+  {
+    "ticker": "PLCE",
+    "source": "Webull"
+  },
+  {
+    "ticker": "BYND",
+    "source": "Webull"
+  },
+  {
+    "ticker": "WOLF",
+    "source": "Webull"
+  },
+  {
+    "ticker": "NWTG",
+    "source": "Webull"
+  },
+  {
+    "ticker": "RR",
+    "source": "Webull"
+  },
+  {
+    "ticker": "HOWL",
+    "source": "Webull"
+  },
+  {
+    "ticker": "CHPT",
+    "source": "Webull"
+  }
+]
