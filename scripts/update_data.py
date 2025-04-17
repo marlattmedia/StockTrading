@@ -33,13 +33,12 @@ def scrape_finviz_for_ticker(ticker):
                 val = cols[i + 1].text.strip()
                 info[key] = val
 
-        price_str = info.get("Price", "0").replace("$", "").replace(",", "")
-        try:
-            price = float(price_str)
-        except ValueError:
-            print(f"⚠️ Could not parse price for {ticker}: {price_str}")
+        price_str = info.get("Price", "").replace("$", "").replace(",", "").strip()
+        if not price_str or not price_str.replace(".", "", 1).isdigit():
+            print(f"⚠️ Skipping {ticker} — invalid price: {price_str}")
             return None
 
+        price = float(price_str)
         if price > 100 or price < 0.5:
             print(f"⏭ Skipping {ticker} — price ${price} outside valid range.")
             return None
