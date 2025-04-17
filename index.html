@@ -133,9 +133,11 @@
       const price = parseFloat(document.getElementById('buyPrice').value);
       const shares = parseInt(document.getElementById('numShares').value);
       if (!isNaN(price) && !isNaN(shares) && shares > 0) {
-        const targetPrice = ((price * shares) + 500) / shares;
+        const totalInvested = price * shares;
+        const profitTarget = totalInvested * 0.10; // 10% profit
+        const sellTarget = (totalInvested + profitTarget) / shares;
         document.getElementById('sellTarget').innerText =
-          `🎯 Sell at: $${targetPrice.toFixed(2)} for $500 profit`;
+          `🎯 Sell at: $${sellTarget.toFixed(2)} for 10% gain ($${profitTarget.toFixed(2)} profit)`;
       } else {
         document.getElementById('sellTarget').innerText = '';
       }
