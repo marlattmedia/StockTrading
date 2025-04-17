@@ -93,17 +93,30 @@
       ]);
 
       const notice = document.getElementById("notice");
-      const totalRows = squeeze.length + reddit.length + alerts.length + fallback.length;
+      const squeezeMap = {};
+      squeeze.forEach(t => {
+        squeezeMap[t.ticker.toUpperCase()] = t;
+        appendRow(t, "✅ Squeeze Match");
+      });
 
-      if (totalRows === 0) {
+      const addFromList = (list, label, seen) => {
+        list.slice(0, 5).forEach(t => {
+          const sym = (t.ticker || t).toUpperCase();
+          if (!seen.has(sym) && squeezeMap[sym]) {
+            appendRow(squeezeMap[sym], label);
+            seen.add(sym);
+          }
+        });
+      };
+
+      const seen = new Set(Object.keys(squeezeMap));
+      addFromList(reddit, "🔥 Reddit Trend", seen);
+      addFromList(alerts, "⚠️ Squeeze Alert", seen);
+      addFromList(fallback, "📌 Manual Watch", seen);
+
+      if (squeeze.length === 0 && seen.size === 0) {
         notice.innerText = "⚠️ No stock data available. Please check your sources.";
-        return;
       }
-
-      squeeze.forEach(t => appendRow(t, "✅ Squeeze Match"));
-      reddit.slice(0, 5).forEach(t => appendRow({ ticker: t.ticker }, "🔥 Reddit Trend"));
-      alerts.slice(0, 5).forEach(t => appendRow({ ticker: t.ticker }, "⚠️ Squeeze Alert"));
-      fallback.slice(0, 5).forEach(t => appendRow({ ticker: t.ticker }, "📌 Manual Watch"));
     }
 
     loadDashboard();
