@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>StockTrading Real-Time Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; padding: 20px; }
+    h1, h2 { color: #FFD700; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #444; }
+    th { background-color: #222; }
+    tr:hover { background-color: #333; }
+    .calculator, .questrade-link { margin-top: 40px; padding: 20px; background: #222; border-radius: 8px; }
+    input[type="number"] { width: 100px; margin-right: 10px; }
+    button { padding: 6px 12px; background: #28a745; color: white; border: none; cursor: pointer; }
+    button:hover { background: #218838; }
+    a.button-link { display: inline-block; margin-top: 10px; padding: 10px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; }
+    a.button-link:hover { background: #0056b3; }
+  </style>
+</head>
+<body>
+
+  <h1>📊 StockTrading Real-Time Dashboard</h1>
+  <h2>📝 Manual Watchlist</h2>
+
+  <table id="stock-table">
+    <thead>
+      <tr>
+        <th>Ticker</th>
+        <th>Price</th>
+        <th>Float</th>
+        <th>Short %</th>
+        <th>Volume</th>
+        <th>Recommendation</th>
+        <th>Source</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="calculator">
+    <h2>🧮 Stock Profit Calculator</h2>
+    <label>Buy Price: $<input type="number" id="buyPrice" step="0.01" /></label>
+    <label>Shares: <input type="number" id="shares" /></label>
+    <button onclick="calculateTarget()">Calculate Sell Target</button>
+    <p id="calcResult"></p>
+  </div>
+
+  <div class="questrade-link">
+    <h2>🔗 Questrade Login</h2>
+    <a class="button-link" href="https://login.questrade.com/account/login" target="_blank">Login to Questrade</a>
+  </div>
+
+  <script>
+    async function loadStockData() {
+      try {
+        const res = await fetch("data/manual-stock-data.json");
+        const stocks = await res.json();
+        const tbody = document.querySelector("#stock-table tbody");
+        stocks.forEach(stock => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${stock.ticker}</td>
+            <td>$${stock.price.toFixed(2)}</td>
+            <td>${stock.float}</td>
+            <td>${stock.short_percent}</td>
+            <td>${stock.volume}</td>
+            <td>${stock.recommendation}</td>
+            <td>${stock.source}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error("Failed to load stock data:", err);
+      }
+    }
+
+    function calculateTarget() {
+      const price = parseFloat(document.getElementById("buyPrice").value);
+      const shares = parseInt(document.getElementById("shares").value);
+      if (!price || !shares || shares <= 0) {
+        document.getElementById("calcResult").textContent = "Please enter valid numbers.";
+        return;
+      }
+      const total = price * shares;
+      const sellTarget = (total + 500) / shares;
+      document.getElementById("calcResult").textContent = `Suggested Sell Price: $${sellTarget.toFixed(2)}`;
+    }
+
+    loadStockData();
+  </script>
+
+</body>
+</html>
