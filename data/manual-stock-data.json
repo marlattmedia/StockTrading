@@ -1,0 +1,92 @@
+[
+  {
+    "ticker": "WOLF",
+    "price": 2.47,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "TFSA",
+    "source": "Manual Watch"
+  },
+  {
+    "ticker": "APDN",
+    "price": 0.811,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "TFSA",
+    "source": "Manual Watch"
+  },
+  {
+    "ticker": "MPW",
+    "price": 5.45,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "TFSA",
+    "source": "Manual Watch"
+  },
+  {
+    "ticker": "MGOM",
+    "price": 3.0,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "TFSA",
+    "source": "Manual Watch"
+  },
+  {
+    "ticker": "SMCI",
+    "price": 31.51,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "Margin",
+    "source": "Manual Watch"
+  },
+  {
+    "ticker": "CHPT",
+    "price": 0.5641,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "TFSA",
+    "source": "Manual Watch"
+  },
+  {
+    "ticker": "LUNR",
+    "price": 7.45,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "TFSA",
+    "source": "Manual Watch"
+  },
+  {
+    "ticker": "TRNR",
+    "price": 0.95,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "TFSA",
+    "source": "Manual Watch"
+  },
+  {
+    "ticker": "XHLD",
+    "price": 0.7499,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "TFSA",
+    "source": "Manual Watch"
+  },
+  {
+    "ticker": "SOBR",
+    "price": 3.56,
+    "short_percent": "20%",
+    "float": "15M",
+    "volume": "500K",
+    "recommendation": "TFSA",
+    "source": "Manual Watch"
+  }
+]
